@@ -378,7 +378,7 @@ const OnePager = () => {
             style={{ color: '#1F3A93', fontFamily: 'Inter' }}
           >
             <span className="font-semibold">Learnformance</span> - Turning your
-            learning data into measurable impact
+            learning data into measurable impact 1143
           </p>
         </div>
       </div>
