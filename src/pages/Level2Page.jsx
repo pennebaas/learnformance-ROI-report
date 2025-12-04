@@ -9,12 +9,12 @@ import {
   ResponsiveContainer,
   LabelList
 } from 'recharts';
-import logo from './assets/Learnformance-logo.png';
+import logo from '../assets/Learnformance-logo.png';
 
 const N8N_ENDPOINT =
   'https://smartorange.app.n8n.cloud/webhook/d6df2854-5663-4dfa-bd76-01c5a75aa40c';
 
-const OnePager = () => {
+const Level2Page = () => {
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
 
@@ -390,4 +390,4 @@ const OnePager = () => {
   );
 };
 
-export default OnePager;
+export default Level2Page;
