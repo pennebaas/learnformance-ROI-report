@@ -1,5 +1,6 @@
 // src/ReportApp.jsx
 import React from "react";
+import "./styles/print.css";
 import Level1Page from "./pages/Level1Page";
 import Level2Page from "./pages/Level2Page";
 import Level3Page from "./pages/Level3Page";
