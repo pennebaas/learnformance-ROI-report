@@ -16,13 +16,12 @@ const A4PageLayout = ({ title, subtitle, children }) => {
     >
       <div
         style={{
-          position: 'relative',              // <-- important
           display: 'flex',
           flexDirection: 'column',
           boxSizing: 'border-box',
-          minHeight: '297mm',                // A4 height
-          padding: '10mm 8mm 20mm',          // extra bottom padding for footer space
+          padding: '10mm 8mm 10mm',
           border: '1px solid #E0E0E0',
+          backgroundColor: '#FFFFFF',
         }}
       >
         {/* HEADER */}
@@ -80,20 +79,16 @@ const A4PageLayout = ({ title, subtitle, children }) => {
           style={{
             flex: 1,
             maxWidth: '100%',
-            paddingBottom: '18mm', // space so body never overlaps footer
           }}
         >
           {children}
         </div>
 
-        {/* FOOTER fixed to bottom of this A4 page */}
+        {/* FOOTER (normal in flow on screen, fixed in print via CSS) */}
         <div
+          className="report-footer"
           style={{
-            position: 'absolute',
-            left: '8mm',
-            right: '8mm',
-            bottom: '8mm',            // bottom position on the A4 "page"
-            paddingTop: '6px',
+            padding: '6px 24px 8px',
             borderTop: '1px solid #E0E0E0',
             display: 'flex',
             alignItems: 'center',
