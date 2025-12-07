@@ -2,10 +2,11 @@
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
-/* Each logical page in the PDF */
+/* Each logical page in the PDF (if you use multiple .page wrappers) */
 .page {
   page-break-after: always;
   padding: 24px;
+  box-sizing: border-box;
 }
 
 .page:last-child {
@@ -34,4 +35,3 @@
 .summary-html {
   margin-top: 24px;
 }
-
