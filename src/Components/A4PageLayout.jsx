@@ -14,7 +14,7 @@ const A4PageLayout = ({ title, subtitle, children }) => {
       }}
     >
       <div
-        className="a4-page"
+        className="page a4-page"
         style={{
           display: 'flex',
           flexDirection: 'column',
@@ -75,10 +75,16 @@ const A4PageLayout = ({ title, subtitle, children }) => {
         </div>
 
         {/* BODY */}
-        <div style={{ flex: 1, maxWidth: '100%' }}>{children}</div>
+        <div style={{ flex: 1, maxWidth: '100%' }}>
+          {children}
+        </div>
 
-        {/* FOOTER */}
+        {/* Spacer so content never overlaps the running footer in PDF */}
+        <div className="footer-space" />
+
+        {/* FOOTER (also used as running footer in print) */}
         <div
+          className="report-footer"
           style={{
             paddingTop: '6px',
             borderTop: '1px solid #E0E0E0',
