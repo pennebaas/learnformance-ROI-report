@@ -1,10 +1,11 @@
-// src/components/A4PageLayout.jsx
+// src/Components/A4PageLayout.jsx
 import React from 'react';
 import logo from '../assets/Learnformance-logo.png';
 
 const A4PageLayout = ({ title, subtitle, children }) => {
   return (
     <div
+      className="page"
       style={{
         fontFamily:
           'Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
@@ -14,13 +15,13 @@ const A4PageLayout = ({ title, subtitle, children }) => {
       }}
     >
       <div
-        className="page a4-page"
         style={{
+          position: 'relative',              // <-- important
           display: 'flex',
           flexDirection: 'column',
-          padding: '10mm 8mm 10mm',
           boxSizing: 'border-box',
-          minHeight: '297mm',
+          minHeight: '297mm',                // A4 height
+          padding: '10mm 8mm 20mm',          // extra bottom padding for footer space
           border: '1px solid #E0E0E0',
         }}
       >
@@ -75,23 +76,28 @@ const A4PageLayout = ({ title, subtitle, children }) => {
         </div>
 
         {/* BODY */}
-        <div style={{ flex: 1, maxWidth: '100%' }}>
+        <div
+          style={{
+            flex: 1,
+            maxWidth: '100%',
+            paddingBottom: '18mm', // space so body never overlaps footer
+          }}
+        >
           {children}
         </div>
 
-        {/* Spacer so content never overlaps the running footer in PDF */}
-        <div className="footer-space" />
-
-        {/* FOOTER (also used as running footer in print) */}
+        {/* FOOTER fixed to bottom of this A4 page */}
         <div
-          className="report-footer"
           style={{
+            position: 'absolute',
+            left: '8mm',
+            right: '8mm',
+            bottom: '8mm',            // bottom position on the A4 "page"
             paddingTop: '6px',
             borderTop: '1px solid #E0E0E0',
             display: 'flex',
             alignItems: 'center',
             backgroundColor: '#FFFFFF',
-            marginTop: 'auto',
           }}
         >
           <img
