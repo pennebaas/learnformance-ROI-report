@@ -8,7 +8,7 @@ const A4PageLayout = ({ title, subtitle, children }) => {
       style={{
         fontFamily:
           'Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
-        maxWidth: '210mm',          // A4 width
+        maxWidth: '210mm',
         margin: '0 auto',
         backgroundColor: '#FFFFFF',
       }}
@@ -18,10 +18,10 @@ const A4PageLayout = ({ title, subtitle, children }) => {
         style={{
           display: 'flex',
           flexDirection: 'column',
-          padding: '10mm 8mm 10mm', // visual margins
+          padding: '10mm 8mm 10mm',
           boxSizing: 'border-box',
-          minHeight: '297mm',        // A4 height on screen
-          border: '1px solid #E0E0E0', // optional: visual outline
+          minHeight: '297mm',
+          border: '1px solid #E0E0E0',
         }}
       >
         {/* HEADER */}
@@ -74,12 +74,10 @@ const A4PageLayout = ({ title, subtitle, children }) => {
           <div style={{ flexShrink: 0, width: '26px' }} />
         </div>
 
-        {/* BODY / PAGE CONTENT */}
-        <div style={{ flex: 1, maxWidth: '100%' }}>
-          {children}
-        </div>
+        {/* BODY */}
+        <div style={{ flex: 1, maxWidth: '100%' }}>{children}</div>
 
-        {/* FOOTER (pinned to bottom on screen via flex + marginTop: auto) */}
+        {/* FOOTER */}
         <div
           style={{
             paddingTop: '6px',
@@ -108,8 +106,8 @@ const A4PageLayout = ({ title, subtitle, children }) => {
               fontFamily: 'Inter, sans-serif',
             }}
           >
-            <span style={{ fontWeight: 600 }}>Learnformance</span> – Turning your
-            learning data into measurable impact
+            <span style={{ fontWeight: 600 }}>Learnformance</span> – Turning
+            your learning data into measurable impact
           </p>
         </div>
       </div>
