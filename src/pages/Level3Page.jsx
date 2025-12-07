@@ -7,11 +7,7 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
-  Legend
+  ResponsiveContainer
 } from 'recharts';
 import A4PageLayout from '../Components/A4PageLayout';
 import './Level3Page.css';
@@ -124,7 +120,8 @@ const MOCK_DATA = [
           }
         ]
       },
-      adoption_attribution_summary_html: '<p>This behaviour adoption score indicates strong and frequent adoption in day-to-day work. There is a noticeable perception gap between managers and participants. The attribution score means the training played a major role in the observed improvement.</p>'
+      adoption_attribution_summary_html:
+        '<p>This behaviour adoption score indicates strong and frequent adoption in day-to-day work. There is a noticeable perception gap between managers and participants. The attribution score means the training played a major role in the observed improvement.</p>'
     }
   }
 ];
@@ -132,6 +129,17 @@ const MOCK_DATA = [
 const Level3Page = () => {
   const data = MOCK_DATA[0];
   const l3 = data.level3_behavior;
+
+  // Global max for mentions across all behavior/barrier/support themes
+  const allMentionCounts = [
+    ...(l3.behaviors?.participant || []).map((b) => b.mentions || 0),
+    ...(l3.behaviors?.manager || []).map((b) => b.mentions || 0),
+    ...(l3.barriers?.participant || []).map((b) => b.mentions || 0),
+    ...(l3.barriers?.manager || []).map((b) => b.mentions || 0),
+    ...(l3.support_needs?.participant || []).map((n) => n.mentions || 0)
+  ];
+  const globalMaxMentions =
+    allMentionCounts.length > 0 ? Math.max(...allMentionCounts) : 0;
 
   // KPI Cards Component
   const KPICard = ({ label, value, isPercent = false }) => (
@@ -174,19 +182,11 @@ const Level3Page = () => {
     </div>
   );
 
-  // Calculate weekly application percentage
+  // Calculate weekly application percentage (strong application: scores 4–5)
   const applySkills = l3.distribution.participant_apply_skills;
   const weeklyPct = Math.round(
     ((applySkills.score_4 || 0) + (applySkills.score_5 || 0)) * 100
   );
-
-  // Application frequency chart data
-  const appFreqData = Object.entries(applySkills)
-    .filter(([, val]) => (val || 0) > 0)
-    .map(([key, val]) => ({
-      name: key.replace('score_', 'Score '),
-      value: (val || 0) * 100
-    }));
 
   // Time saved chart data
   const timeSavedData = Object.entries(
@@ -196,12 +196,10 @@ const Level3Page = () => {
     value: (val || 0) * 100
   }));
 
-  const COLORS = ['#1F3A93', '#3FA9F5', '#00B894', '#27AE60', '#F4A261'];
-
   // Theme bars component
   const ThemeBar = ({ theme, mentions, maxMentions, color = '#1F3A93' }) => {
     const percentage = maxMentions ? (mentions / maxMentions) * 100 : 0;
-    
+
     return (
       <div
         style={{
@@ -257,7 +255,7 @@ const Level3Page = () => {
     );
   };
 
-  // Quote box component - restored to original styling
+  // Quote box component
   const QuoteBox = ({ text, author, isManager = false }) => (
     <div
       style={{
@@ -298,636 +296,683 @@ const Level3Page = () => {
     </div>
   );
 
-  const maxParticipantMentions = Math.max(
-    ...(l3.behaviors.participant || []).map((b) => b.mentions),
-    0
-  );
-  const maxManagerMentions = Math.max(
-    ...(l3.behaviors.manager || []).map((b) => b.mentions),
-    0
-  );
-
   return (
     <A4PageLayout
-      title={data.title || 'Level 3 – Behavior Change & On-the-Job Application'}
+      title={
+        data.title ||
+        'Level 3 – Behavior Change & On-the-Job Application'
+      }
       subtitle="GenAI Training Program | Follow-up 6 weeks after training"
     >
-      <div style={{ 
-        width: '100%', 
-        height: 'auto',
-        minHeight: 'auto',
-        overflow: 'visible'
-      }}>
-      {/* Additional spacing after header - 3 lines total */}
-      <div style={{ marginBottom: '36px' }} />
-      
-      {/* KPI STRIP */}
       <div
-        className="grid-container"
         style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(3, 1fr)',
-          gap: '8px',
-          marginBottom: '12px'
+          width: '100%',
+          height: 'auto',
+          minHeight: 'auto',
+          overflow: 'visible'
         }}
       >
-        <KPICard
-          label="Participant Behavior Adoption"
-          value={l3.kpis.participant_behavior_score}
-        />
-        <KPICard
-          label="Manager-Rated Behavior"
-          value={l3.kpis.manager_behavior_score}
-        />
-        <KPICard
-          label="Attribution to Training (Avg)"
-          value={l3.kpis.avg_attribution_percent}
-          isPercent
-        />
-      </div>
+        {/* Additional spacing after header - 3 lines total */}
+        <div style={{ marginBottom: '36px' }} />
 
-      {/* SUMMARY INSIGHT - moved to appear after KPI cards */}
-      {l3.adoption_attribution_summary_html && (
+        {/* KPI STRIP */}
         <div
+          className="grid-container"
           style={{
-            padding: '8px',
-            borderRadius: '8px',
-            backgroundColor: '#F5F7FA',
-            boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
-            marginBottom: '10px',
-            borderLeft: '3px solid #1F3A93'
+            display: 'grid',
+            gridTemplateColumns: 'repeat(3, 1fr)',
+            gap: '8px',
+            marginBottom: '12px'
           }}
         >
-          <div
-            style={{
-              fontSize: '10px',
-              color: '#2C3E50',
-              lineHeight: 1.5
-            }}
-            dangerouslySetInnerHTML={{
-              __html: l3.adoption_attribution_summary_html
-            }}
+          <KPICard
+            label="Participant Behavior Adoption"
+            value={l3.kpis.participant_behavior_score}
+          />
+          <KPICard
+            label="Manager-Rated Behavior"
+            value={l3.kpis.manager_behavior_score}
+          />
+          <KPICard
+            label="Attribution to Training (Avg)"
+            value={l3.kpis.avg_attribution_percent}
+            isPercent
           />
         </div>
-      )}
 
-      {/* Extra line before Application Overview */}
-      <div style={{ marginBottom: '12px' }} />
-
-      {/* APPLICATION OVERVIEW */}
-      <div className="section-header" style={{ marginBottom: '4px' }}>
-        <h2
-          style={{
-            margin: 0,
-            marginBottom: '4px',
-            fontSize: '13px',
-            fontWeight: 600,
-            fontFamily: 'Manrope, sans-serif',
-            color: '#2C3E50'
-          }}
-        >
-          Application Overview
-        </h2>
-      </div>
-
-      <div
-        className="grid-container"
-        style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: '8px',
-          marginBottom: '0px'
-        }}
-      >
-        {/* Participant Scores - Three Column Charts */}
-        <div
-          className="chart-card"
-          style={{
-            padding: '8px',
-            borderRadius: '8px',
-            backgroundColor: '#F5F7FA',
-            boxShadow: '0 1px 3px rgba(0,0,0,0.04)'
-          }}
-        >
-          <h3
-            style={{
-              margin: 0,
-              marginBottom: '6px',
-              fontSize: '11px',
-              fontWeight: 600,
-              color: '#2C3E50'
-            }}
-          >
-            Participant Self-Assessment
-          </h3>
-          <div style={{ width: '100%', height: 140 }}>
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart
-                data={[
-                  {
-                    name: 'Application',
-                    value: (l3.distribution.participant_strong_application_pct || 0) * 100
-                  },
-                  {
-                    name: 'Confidence',
-                    value: (l3.distribution.participant_strong_confidence_pct || 0) * 100
-                  },
-                  {
-                    name: 'Improvement',
-                    value: (l3.distribution.participant_strong_improvement_pct || 0) * 100
-                  }
-                ]}
-              >
-                <CartesianGrid strokeDasharray="3 3" stroke="#E0E0E0" />
-                <XAxis
-                  dataKey="name"
-                  tick={{
-                    fill: '#2C3E50',
-                    fontFamily: 'Inter, sans-serif',
-                    fontSize: 9
-                  }}
-                />
-                <YAxis
-                  domain={[0, 100]}
-                  tick={{
-                    fill: '#2C3E50',
-                    fontFamily: 'Inter, sans-serif',
-                    fontSize: 9
-                  }}
-                />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: '#F5F7FA',
-                    border: '1px solid #00B894',
-                    borderRadius: '8px',
-                    fontFamily: 'Inter, sans-serif',
-                    fontSize: '10px'
-                  }}
-                  formatter={(value) => `${value.toFixed(0)}%`}
-                />
-                <Bar dataKey="value" fill="#00B894" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-
-        {/* Manager Scores - Three Column Charts */}
-        <div
-          className="chart-card"
-          style={{
-            padding: '8px',
-            borderRadius: '8px',
-            backgroundColor: '#F5F7FA',
-            boxShadow: '0 1px 3px rgba(0,0,0,0.04)'
-          }}
-        >
-          <h3
-            style={{
-              margin: 0,
-              marginBottom: '6px',
-              fontSize: '11px',
-              fontWeight: 600,
-              color: '#2C3E50'
-            }}
-          >
-            Manager Assessment
-          </h3>
-          <div style={{ width: '100%', height: 140 }}>
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart
-                data={[
-                  {
-                    name: 'Application',
-                    value: (l3.distribution.manager_strong_application_pct || 0) * 100
-                  },
-                  {
-                    name: 'Confidence',
-                    value: (l3.distribution.manager_strong_confidence_pct || 0) * 100
-                  },
-                  {
-                    name: 'Improvement',
-                    value: (l3.distribution.manager_strong_improvement_pct || 0) * 100
-                  }
-                ]}
-              >
-                <CartesianGrid strokeDasharray="3 3" stroke="#E0E0E0" />
-                <XAxis
-                  dataKey="name"
-                  tick={{
-                    fill: '#2C3E50',
-                    fontFamily: 'Inter, sans-serif',
-                    fontSize: 9
-                  }}
-                />
-                <YAxis
-                  domain={[0, 100]}
-                  tick={{
-                    fill: '#2C3E50',
-                    fontFamily: 'Inter, sans-serif',
-                    fontSize: 9
-                  }}
-                />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: '#F5F7FA',
-                    border: '1px solid #00B894',
-                    borderRadius: '8px',
-                    fontFamily: 'Inter, sans-serif',
-                    fontSize: '10px'
-                  }}
-                  formatter={(value) => `${value.toFixed(0)}%`}
-                />
-                <Bar dataKey="value" fill="#00B894" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-      </div>
-
-      {/* Explanation text under charts */}
-      <div
-        style={{
-          padding: '4px 12px',
-          borderRadius: '6px',
-          backgroundColor: '#F5F7FA',
-          marginBottom: '10px',
-          marginTop: '4px',
-          fontSize: '9px',
-          color: '#2C3E50',
-          fontStyle: 'italic',
-          textAlign: 'center',
-          lineHeight: 1.4
-        }}
-      >
-        % of respondents that perceives a strong (4-5) application (frequency, confidence and skill improvement) of the trained skills.
-      </div>
-
-      {/* TIME SAVED PER WEEK */}
-      <div className="section-break section-header" style={{ marginBottom: '6px' }}>
-        <h2
-          style={{
-            margin: 0,
-            marginBottom: '4px',
-            fontSize: '13px',
-            fontWeight: 600,
-            fontFamily: 'Manrope, sans-serif',
-            color: '#2C3E50'
-          }}
-        >
-          Time Saved Per Week
-        </h2>
-      </div>
-
-      <div
-        className="grid-container"
-        style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 2fr',
-          gap: '8px',
-          marginBottom: '10px'
-        }}
-      >
-        {/* Left: Average Time Saved Card */}
-        <div
-          className="chart-card"
-          style={{
-            padding: '8px',
-            borderRadius: '8px',
-            backgroundColor: '#F5F7FA',
-            boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            alignItems: 'center',
-            borderTop: '3px solid #1F3A93'
-          }}
-        >
+        {/* SUMMARY INSIGHT */}
+        {l3.adoption_attribution_summary_html && (
           <div
             style={{
-              fontSize: '36px',
-              fontWeight: 700,
-              color: '#1F3A93',
+              padding: '8px',
+              borderRadius: '8px',
+              backgroundColor: '#F5F7FA',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+              marginBottom: '10px',
+              borderLeft: '3px solid #1F3A93'
+            }}
+          >
+            <div
+              style={{
+                fontSize: '10px',
+                color: '#2C3E50',
+                lineHeight: 1.5
+              }}
+              dangerouslySetInnerHTML={{
+                __html: l3.adoption_attribution_summary_html
+              }}
+            />
+          </div>
+        )}
+
+        {/* Extra line before Application Overview */}
+        <div style={{ marginBottom: '12px' }} />
+
+        {/* APPLICATION OVERVIEW */}
+        <div className="section-header" style={{ marginBottom: '4px' }}>
+          <h2
+            style={{
+              margin: 0,
+              marginBottom: '4px',
+              fontSize: '13px',
+              fontWeight: 600,
               fontFamily: 'Manrope, sans-serif',
-              marginBottom: '4px'
+              color: '#2C3E50'
             }}
           >
-            {l3.kpis.time_saved_minutes_avg.toFixed(1)}
-          </div>
+            Application Overview
+          </h2>
+        </div>
+
+        {/* Strong application highlight */}
+        <div
+          style={{
+            fontSize: '9px',
+            color: '#2C3E50',
+            opacity: 0.8,
+            marginBottom: '6px',
+            fontStyle: 'italic'
+          }}
+        >
+          {weeklyPct}% of participants report a strong (4–5) level of applying
+          the trained skills in their weekly work.
+        </div>
+
+        <div
+          className="grid-container"
+          style={{
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr',
+            gap: '8px',
+            marginBottom: '0px'
+          }}
+        >
+          {/* Participant Scores - Three Column Charts */}
           <div
+            className="chart-card"
             style={{
-              fontSize: '10px',
-              color: '#2C3E50',
-              opacity: 0.7,
-              textTransform: 'uppercase',
-              letterSpacing: '0.5px',
-              fontWeight: 600,
-              textAlign: 'center'
+              padding: '8px',
+              borderRadius: '8px',
+              backgroundColor: '#F5F7FA',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.04)'
             }}
           >
-            Avg Minutes Saved Per Day
+            <h3
+              style={{
+                margin: 0,
+                marginBottom: '6px',
+                fontSize: '11px',
+                fontWeight: 600,
+                color: '#2C3E50'
+              }}
+            >
+              Participant Self-Assessment
+            </h3>
+            <div style={{ width: '100%', height: 140 }}>
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                  data={[
+                    {
+                      name: 'Application',
+                      value:
+                        (l3.distribution
+                          .participant_strong_application_pct || 0) * 100
+                    },
+                    {
+                      name: 'Confidence',
+                      value:
+                        (l3.distribution
+                          .participant_strong_confidence_pct || 0) * 100
+                    },
+                    {
+                      name: 'Improvement',
+                      value:
+                        (l3.distribution
+                          .participant_strong_improvement_pct || 0) * 100
+                    }
+                  ]}
+                >
+                  <CartesianGrid strokeDasharray="3 3" stroke="#E0E0E0" />
+                  <XAxis
+                    dataKey="name"
+                    tick={{
+                      fill: '#2C3E50',
+                      fontFamily: 'Inter, sans-serif',
+                      fontSize: 9
+                    }}
+                  />
+                  <YAxis
+                    domain={[0, 100]}
+                    tick={{
+                      fill: '#2C3E50',
+                      fontFamily: 'Inter, sans-serif',
+                      fontSize: 9
+                    }}
+                  />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: '#F5F7FA',
+                      border: '1px solid #00B894',
+                      borderRadius: '8px',
+                      fontFamily: 'Inter, sans-serif',
+                      fontSize: '10px'
+                    }}
+                    formatter={(value) => `${value.toFixed(0)}%`}
+                  />
+                  <Bar
+                    dataKey="value"
+                    fill="#00B894"
+                    radius={[4, 4, 0, 0]}
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+          {/* Manager Scores - Three Column Charts */}
+          <div
+            className="chart-card"
+            style={{
+              padding: '8px',
+              borderRadius: '8px',
+              backgroundColor: '#F5F7FA',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.04)'
+            }}
+          >
+            <h3
+              style={{
+                margin: 0,
+                marginBottom: '6px',
+                fontSize: '11px',
+                fontWeight: 600,
+                color: '#2C3E50'
+              }}
+            >
+              Manager Assessment
+            </h3>
+            <div style={{ width: '100%', height: 140 }}>
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                  data={[
+                    {
+                      name: 'Application',
+                      value:
+                        (l3.distribution.manager_strong_application_pct ||
+                          0) * 100
+                    },
+                    {
+                      name: 'Confidence',
+                      value:
+                        (l3.distribution.manager_strong_confidence_pct ||
+                          0) * 100
+                    },
+                    {
+                      name: 'Improvement',
+                      value:
+                        (l3.distribution.manager_strong_improvement_pct ||
+                          0) * 100
+                    }
+                  ]}
+                >
+                  <CartesianGrid strokeDasharray="3 3" stroke="#E0E0E0" />
+                  <XAxis
+                    dataKey="name"
+                    tick={{
+                      fill: '#2C3E50',
+                      fontFamily: 'Inter, sans-serif',
+                      fontSize: 9
+                    }}
+                  />
+                  <YAxis
+                    domain={[0, 100]}
+                    tick={{
+                      fill: '#2C3E50',
+                      fontFamily: 'Inter, sans-serif',
+                      fontSize: 9
+                    }}
+                  />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: '#F5F7FA',
+                      border: '1px solid #00B894',
+                      borderRadius: '8px',
+                      fontFamily: 'Inter, sans-serif',
+                      fontSize: '10px'
+                    }}
+                    formatter={(value) => `${value.toFixed(0)}%`}
+                  />
+                  <Bar
+                    dataKey="value"
+                    fill="#00B894"
+                    radius={[4, 4, 0, 0]}
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
           </div>
         </div>
 
-        {/* Right: Horizontal Bar Chart Distribution */}
+        {/* Explanation text under charts */}
         <div
-          className="chart-card"
           style={{
-            padding: '8px',
-            borderRadius: '8px',
+            padding: '4px 12px',
+            borderRadius: '6px',
             backgroundColor: '#F5F7FA',
-            boxShadow: '0 1px 3px rgba(0,0,0,0.04)'
+            marginBottom: '10px',
+            marginTop: '4px',
+            fontSize: '9px',
+            color: '#2C3E50',
+            fontStyle: 'italic',
+            textAlign: 'center',
+            lineHeight: 1.4
           }}
         >
-          <h3
+          % of respondents that perceives a strong (4-5) application (frequency,
+          confidence and skill improvement) of the trained skills.
+        </div>
+
+        {/* TIME SAVED PER WEEK */}
+        <div
+          className="section-break section-header"
+          style={{ marginBottom: '6px' }}
+        >
+          <h2
             style={{
               margin: 0,
-              marginBottom: '6px',
-              fontSize: '11px',
+              marginBottom: '4px',
+              fontSize: '13px',
               fontWeight: 600,
+              fontFamily: 'Manrope, sans-serif',
               color: '#2C3E50'
             }}
           >
-            Distribution
-          </h3>
-          <div style={{ width: '100%', height: 100 }}>
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart
-                layout="vertical"
-                data={timeSavedData}
-              >
-                <CartesianGrid strokeDasharray="3 3" stroke="#E0E0E0" />
-                <XAxis
-                  type="number"
-                  domain={[0, 100]}
-                  tick={{
-                    fill: '#2C3E50',
-                    fontFamily: 'Inter, sans-serif',
-                    fontSize: 9
-                  }}
-                />
-                <YAxis
-                  type="category"
-                  dataKey="name"
-                  width={120}
-                  tick={{
-                    fill: '#2C3E50',
-                    fontFamily: 'Inter, sans-serif',
-                    fontSize: 9
-                  }}
-                />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: '#F5F7FA',
-                    border: '1px solid #1F3A93',
-                    borderRadius: '8px',
-                    fontFamily: 'Inter, sans-serif',
-                    fontSize: '10px'
-                  }}
-                  formatter={(value) => `${value.toFixed(0)}%`}
-                />
-                <Bar dataKey="value" fill="#1F3A93" radius={[0, 4, 4, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
+            Time Saved Per Week
+          </h2>
+        </div>
+
+        <div
+          className="grid-container"
+          style={{
+            display: 'grid',
+            gridTemplateColumns: '1fr 2fr',
+            gap: '8px',
+            marginBottom: '10px'
+          }}
+        >
+          {/* Left: Average Time Saved Card */}
+          <div
+            className="chart-card"
+            style={{
+              padding: '8px',
+              borderRadius: '8px',
+              backgroundColor: '#F5F7FA',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'center',
+              borderTop: '3px solid #1F3A93'
+            }}
+          >
+            <div
+              style={{
+                fontSize: '36px',
+                fontWeight: 700,
+                color: '#1F3A93',
+                fontFamily: 'Manrope, sans-serif',
+                marginBottom: '4px'
+              }}
+            >
+              {l3.kpis.time_saved_minutes_avg.toFixed(1)}
+            </div>
+            <div
+              style={{
+                fontSize: '10px',
+                color: '#2C3E50',
+                opacity: 0.7,
+                textTransform: 'uppercase',
+                letterSpacing: '0.5px',
+                fontWeight: 600,
+                textAlign: 'center'
+              }}
+            >
+              Avg Minutes Saved Per Day
+            </div>
+          </div>
+
+          {/* Right: Horizontal Bar Chart Distribution */}
+          <div
+            className="chart-card"
+            style={{
+              padding: '8px',
+              borderRadius: '8px',
+              backgroundColor: '#F5F7FA',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.04)'
+            }}
+          >
+            <h3
+              style={{
+                margin: 0,
+                marginBottom: '6px',
+                fontSize: '11px',
+                fontWeight: 600,
+                color: '#2C3E50'
+              }}
+            >
+              Distribution
+            </h3>
+            <div style={{ width: '100%', height: 100 }}>
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart layout="vertical" data={timeSavedData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#E0E0E0" />
+                  <XAxis
+                    type="number"
+                    domain={[0, 100]}
+                    tick={{
+                      fill: '#2C3E50',
+                      fontFamily: 'Inter, sans-serif',
+                      fontSize: 9
+                    }}
+                  />
+                  <YAxis
+                    type="category"
+                    dataKey="name"
+                    width={120}
+                    tick={{
+                      fill: '#2C3E50',
+                      fontFamily: 'Inter, sans-serif',
+                      fontSize: 9
+                    }}
+                  />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: '#F5F7FA',
+                      border: '1px solid #1F3A93',
+                      borderRadius: '8px',
+                      fontFamily: 'Inter, sans-serif',
+                      fontSize: '10px'
+                    }}
+                    formatter={(value) => `${value.toFixed(0)}%`}
+                  />
+                  <Bar
+                    dataKey="value"
+                    fill="#1F3A93"
+                    radius={[0, 4, 4, 0]}
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* KEY APPLIED BEHAVIORS */}
-      <div className="section-break section-header" style={{ marginBottom: '6px' }}>
-        <h2
-          style={{
-            margin: 0,
-            marginBottom: '4px',
-            fontSize: '13px',
-            fontWeight: 600,
-            fontFamily: 'Manrope, sans-serif',
-            color: '#2C3E50'
-          }}
-        >
-          Key Applied Behaviors
-        </h2>
-      </div>
+        {/* Spacer to push 'Key Applied Behaviors' to next printed page */}
+        <div style={{ height: '80px' }} />
 
-      <div
-        className="grid-container"
-        style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: '8px',
-          marginBottom: '10px'
-        }}
-      >
-        {/* Participant Behaviors */}
+        {/* KEY APPLIED BEHAVIORS */}
         <div
-          className="behavior-card"
-          style={{
-            padding: '8px',
-            borderRadius: '8px',
-            backgroundColor: '#F5F7FA',
-            boxShadow: '0 1px 3px rgba(0,0,0,0.04)'
-          }}
+          className="section-break section-header"
+          style={{ marginBottom: '6px' }}
         >
-          <h3
+          <h2
             style={{
               margin: 0,
-              marginBottom: '8px',
-              fontSize: '11px',
+              marginBottom: '4px',
+              fontSize: '13px',
               fontWeight: 600,
+              fontFamily: 'Manrope, sans-serif',
               color: '#2C3E50'
             }}
           >
-            Participant-Reported
-          </h3>
-          {l3.behaviors.participant.map((behavior) => (
-            <ThemeBar
-              key={behavior.theme}
-              theme={behavior.theme}
-              mentions={behavior.mentions}
-              maxMentions={maxParticipantMentions}
-              color="#1F3A93"
-            />
-          ))}
-          <div style={{ marginTop: '8px' }}>
-            {l3.behaviors.participant.slice(0, 2).map((behavior) => (
-              <QuoteBox
-                key={behavior.example}
-                text={behavior.example}
-                author="Participant"
-                isManager={false}
+            Key Applied Behaviors
+          </h2>
+        </div>
+
+        <div
+          className="grid-container"
+          style={{
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr',
+            gap: '8px',
+            marginBottom: '10px'
+          }}
+        >
+          {/* Participant Behaviors */}
+          <div
+            className="behavior-card"
+            style={{
+              padding: '8px',
+              borderRadius: '8px',
+              backgroundColor: '#F5F7FA',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.04)'
+            }}
+          >
+            <h3
+              style={{
+                margin: 0,
+                marginBottom: '8px',
+                fontSize: '11px',
+                fontWeight: 600,
+                color: '#2C3E50'
+              }}
+            >
+              Participant-Reported
+            </h3>
+            {l3.behaviors.participant.map((behavior) => (
+              <ThemeBar
+                key={behavior.theme}
+                theme={behavior.theme}
+                mentions={behavior.mentions}
+                maxMentions={globalMaxMentions}
+                color="#1F3A93"
+              />
+            ))}
+            <div style={{ marginTop: '8px' }}>
+              {l3.behaviors.participant.slice(0, 2).map((behavior) => (
+                <QuoteBox
+                  key={behavior.example}
+                  text={behavior.example}
+                  author="Participant"
+                  isManager={false}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* Manager Observations */}
+          <div
+            className="behavior-card"
+            style={{
+              padding: '8px',
+              borderRadius: '8px',
+              backgroundColor: '#F5F7FA',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.04)'
+            }}
+          >
+            <h3
+              style={{
+                margin: 0,
+                marginBottom: '8px',
+                fontSize: '11px',
+                fontWeight: 600,
+                color: '#2C3E50'
+              }}
+            >
+              Manager-Observed
+            </h3>
+            {l3.behaviors.manager.map((behavior) => (
+              <ThemeBar
+                key={behavior.theme}
+                theme={behavior.theme}
+                mentions={behavior.mentions}
+                maxMentions={globalMaxMentions}
+                color="#3FA9F5"
+              />
+            ))}
+            <div style={{ marginTop: '8px' }}>
+              {l3.behaviors.manager.slice(0, 2).map((behavior) => (
+                <QuoteBox
+                  key={behavior.example}
+                  text={behavior.example}
+                  author="Manager"
+                  isManager={true}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* BARRIERS TO APPLICATION */}
+        <div
+          className="section-break section-header"
+          style={{ marginBottom: '6px' }}
+        >
+          <h2
+            style={{
+              margin: 0,
+              marginBottom: '4px',
+              fontSize: '13px',
+              fontWeight: 600,
+              fontFamily: 'Manrope, sans-serif',
+              color: '#2C3E50'
+            }}
+          >
+            Barriers to Application
+          </h2>
+        </div>
+
+        <div
+          className="grid-container"
+          style={{
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr',
+            gap: '8px',
+            marginBottom: '10px'
+          }}
+        >
+          {/* Participant Barriers */}
+          <div
+            className="barrier-card"
+            style={{
+              padding: '8px',
+              borderRadius: '8px',
+              backgroundColor: '#F5F7FA',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.04)'
+            }}
+          >
+            <h3
+              style={{
+                margin: 0,
+                marginBottom: '8px',
+                fontSize: '11px',
+                fontWeight: 600,
+                color: '#2C3E50'
+              }}
+            >
+              Participant Barriers
+            </h3>
+            {l3.barriers.participant.map((barrier) => (
+              <ThemeBar
+                key={barrier.theme}
+                theme={barrier.theme}
+                mentions={barrier.mentions}
+                maxMentions={globalMaxMentions}
+                color="#ED8936"
+              />
+            ))}
+          </div>
+
+          {/* Manager Barriers */}
+          <div
+            className="barrier-card"
+            style={{
+              padding: '8px',
+              borderRadius: '8px',
+              backgroundColor: '#F5F7FA',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.04)'
+            }}
+          >
+            <h3
+              style={{
+                margin: 0,
+                marginBottom: '8px',
+                fontSize: '11px',
+                fontWeight: 600,
+                color: '#2C3E50'
+              }}
+            >
+              Manager-Identified Barriers
+            </h3>
+            {l3.barriers.manager.map((barrier) => (
+              <ThemeBar
+                key={barrier.theme}
+                theme={barrier.theme}
+                mentions={barrier.mentions}
+                maxMentions={globalMaxMentions}
+                color="#ED8936"
               />
             ))}
           </div>
         </div>
 
-        {/* Manager Observations */}
+        {/* SUPPORT NEEDS */}
         <div
-          className="behavior-card"
+          className="section-break section-header"
+          style={{ marginBottom: '6px' }}
+        >
+          <h2
+            style={{
+              margin: 0,
+              marginBottom: '4px',
+              fontSize: '13px',
+              fontWeight: 600,
+              fontFamily: 'Manrope, sans-serif',
+              color: '#2C3E50'
+            }}
+          >
+            Requested Support & Next Steps
+          </h2>
+        </div>
+
+        <div
+          className="support-card"
           style={{
             padding: '8px',
             borderRadius: '8px',
             backgroundColor: '#F5F7FA',
-            boxShadow: '0 1px 3px rgba(0,0,0,0.04)'
+            boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+            marginBottom: '10px'
           }}
         >
-          <h3
-            style={{
-              margin: 0,
-              marginBottom: '8px',
-              fontSize: '11px',
-              fontWeight: 600,
-              color: '#2C3E50'
-            }}
-          >
-            Manager-Observed
-          </h3>
-          {l3.behaviors.manager.map((behavior) => (
+          {l3.support_needs.participant.map((need) => (
             <ThemeBar
-              key={behavior.theme}
-              theme={behavior.theme}
-              mentions={behavior.mentions}
-              maxMentions={maxManagerMentions}
-              color="#3FA9F5"
-            />
-          ))}
-          <div style={{ marginTop: '8px' }}>
-            {l3.behaviors.manager.slice(0, 2).map((behavior) => (
-              <QuoteBox
-                key={behavior.example}
-                text={behavior.example}
-                author="Manager"
-                isManager={true}
-              />
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* BARRIERS TO APPLICATION */}
-      <div className="section-break section-header" style={{ marginBottom: '6px' }}>
-        <h2
-          style={{
-            margin: 0,
-            marginBottom: '4px',
-            fontSize: '13px',
-            fontWeight: 600,
-            fontFamily: 'Manrope, sans-serif',
-            color: '#2C3E50'
-          }}
-        >
-          Barriers to Application
-        </h2>
-      </div>
-
-      <div
-        className="grid-container"
-        style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: '8px',
-          marginBottom: '10px'
-        }}
-      >
-        {/* Participant Barriers */}
-        <div
-          className="barrier-card"
-          style={{
-            padding: '8px',
-            borderRadius: '8px',
-            backgroundColor: '#F5F7FA',
-            boxShadow: '0 1px 3px rgba(0,0,0,0.04)'
-          }}
-        >
-          <h3
-            style={{
-              margin: 0,
-              marginBottom: '8px',
-              fontSize: '11px',
-              fontWeight: 600,
-              color: '#2C3E50'
-            }}
-          >
-            Participant Barriers
-          </h3>
-          {l3.barriers.participant.map((barrier) => (
-            <ThemeBar
-              key={barrier.theme}
-              theme={barrier.theme}
-              mentions={barrier.mentions}
-              maxMentions={Math.max(...l3.barriers.participant.map(b => b.mentions))}
-              color="#ED8936"
+              key={need.theme}
+              theme={need.theme}
+              mentions={need.mentions}
+              maxMentions={globalMaxMentions}
+              color="#00B894"
             />
           ))}
         </div>
-
-        {/* Manager Barriers */}
-        <div
-          className="barrier-card"
-          style={{
-            padding: '8px',
-            borderRadius: '8px',
-            backgroundColor: '#F5F7FA',
-            boxShadow: '0 1px 3px rgba(0,0,0,0.04)'
-          }}
-        >
-          <h3
-            style={{
-              margin: 0,
-              marginBottom: '8px',
-              fontSize: '11px',
-              fontWeight: 600,
-              color: '#2C3E50'
-            }}
-          >
-            Manager-Identified Barriers
-          </h3>
-          {l3.barriers.manager.map((barrier) => (
-            <ThemeBar
-              key={barrier.theme}
-              theme={barrier.theme}
-              mentions={barrier.mentions}
-              maxMentions={Math.max(...l3.barriers.manager.map(b => b.mentions))}
-              color="#ED8936"
-            />
-          ))}
-        </div>
-      </div>
-
-      {/* SUPPORT NEEDS */}
-      <div className="section-break section-header" style={{ marginBottom: '6px' }}>
-        <h2
-          style={{
-            margin: 0,
-            marginBottom: '4px',
-            fontSize: '13px',
-            fontWeight: 600,
-            fontFamily: 'Manrope, sans-serif',
-            color: '#2C3E50'
-          }}
-        >
-          Requested Support & Next Steps
-        </h2>
-      </div>
-
-      <div
-        className="support-card"
-        style={{
-          padding: '8px',
-          borderRadius: '8px',
-          backgroundColor: '#F5F7FA',
-          boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
-          marginBottom: '10px'
-        }}
-      >
-        {l3.support_needs.participant.map((need) => (
-          <ThemeBar
-            key={need.theme}
-            theme={need.theme}
-            mentions={need.mentions}
-            maxMentions={Math.max(...l3.support_needs.participant.map(n => n.mentions))}
-            color="#00B894"
-          />
-        ))}
-      </div>
       </div>
     </A4PageLayout>
   );
