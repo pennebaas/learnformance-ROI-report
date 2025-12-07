@@ -5,23 +5,23 @@ import logo from '../assets/Learnformance-logo.png';
 const A4PageLayout = ({ title, subtitle, children }) => {
   return (
     <div
-      className="page"
+      className="a4-page"
       style={{
         fontFamily:
           'Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
-        maxWidth: '210mm',
-        margin: '0 auto',
-        backgroundColor: '#FFFFFF',
+        width: '210mm',          // full A4 width
+        minHeight: '297mm',      // full A4 height
+        margin: 0,               // no centering margin
+        backgroundColor: '#FFFFFF'
       }}
     >
       <div
         style={{
           display: 'flex',
           flexDirection: 'column',
+          padding: '10mm 4mm 10mm', // ↓ less space on the sides (4mm instead of 8mm)
           boxSizing: 'border-box',
-          padding: '10mm 8mm 10mm',
-          border: '1px solid #E0E0E0',
-          backgroundColor: '#FFFFFF',
+          backgroundColor: '#FFFFFF'
         }}
       >
         {/* HEADER */}
@@ -29,7 +29,7 @@ const A4PageLayout = ({ title, subtitle, children }) => {
           style={{
             display: 'flex',
             alignItems: 'flex-start',
-            marginBottom: '10px',
+            marginBottom: '10px'
           }}
         >
           <div style={{ flexShrink: 0, marginRight: '10px' }}>
@@ -39,7 +39,7 @@ const A4PageLayout = ({ title, subtitle, children }) => {
               style={{
                 width: '26px',
                 height: 'auto',
-                objectFit: 'contain',
+                objectFit: 'contain'
               }}
             />
           </div>
@@ -52,7 +52,7 @@ const A4PageLayout = ({ title, subtitle, children }) => {
                 fontSize: '18px',
                 fontWeight: 700,
                 fontFamily: 'Manrope, sans-serif',
-                color: '#2C3E50',
+                color: '#2C3E50'
               }}
             >
               {title}
@@ -63,7 +63,7 @@ const A4PageLayout = ({ title, subtitle, children }) => {
                   margin: 0,
                   fontSize: '12px',
                   color: '#2C3E50',
-                  opacity: 0.8,
+                  opacity: 0.8
                 }}
               >
                 {subtitle}
@@ -75,24 +75,17 @@ const A4PageLayout = ({ title, subtitle, children }) => {
         </div>
 
         {/* BODY */}
-        <div
-          style={{
-            flex: 1,
-            maxWidth: '100%',
-          }}
-        >
-          {children}
-        </div>
+        <div style={{ flex: 1, maxWidth: '100%' }}>{children}</div>
 
-        {/* FOOTER (normal in flow on screen, fixed in print via CSS) */}
+        {/* FOOTER – on-screen footer, can be kept or removed for PDF */}
         <div
-          className="report-footer"
           style={{
-            padding: '6px 24px 8px',
+            paddingTop: '6px',
             borderTop: '1px solid #E0E0E0',
             display: 'flex',
             alignItems: 'center',
             backgroundColor: '#FFFFFF',
+            marginTop: '16px'
           }}
         >
           <img
@@ -102,7 +95,7 @@ const A4PageLayout = ({ title, subtitle, children }) => {
               width: '18px',
               height: 'auto',
               objectFit: 'contain',
-              marginRight: '6px',
+              marginRight: '6px'
             }}
           />
           <p
@@ -110,7 +103,7 @@ const A4PageLayout = ({ title, subtitle, children }) => {
               margin: 0,
               fontSize: '10px',
               color: '#2C3E50',
-              fontFamily: 'Inter, sans-serif',
+              fontFamily: 'Inter, sans-serif'
             }}
           >
             <span style={{ fontWeight: 600 }}>Learnformance</span> – Turning
