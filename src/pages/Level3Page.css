@@ -1,0 +1,65 @@
+/* Level3Page.css - Print styles for multi-page handling */
+
+/* Prevent page breaks inside these elements */
+.kpi-card,
+.chart-card,
+.behavior-card,
+.barrier-card,
+.support-card {
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
+/* Prevent orphaned headers */
+h2, h3 {
+  page-break-after: avoid;
+  break-after: avoid;
+}
+
+/* Keep section headers with their content */
+.section-header {
+  page-break-after: avoid;
+  break-after: avoid;
+}
+
+/* Keep grids together when possible */
+.grid-container {
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
+/* Allow page breaks between major sections */
+.section-break {
+  page-break-before: auto;
+  break-before: auto;
+}
+
+@media print {
+  /* Ensure proper page breaks */
+  body {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+  
+  /* Prevent page breaks inside cards */
+  .kpi-card,
+  .chart-card,
+  .behavior-card,
+  .barrier-card,
+  .support-card {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+  
+  /* Keep headers with content */
+  h2, h3 {
+    page-break-after: avoid !important;
+    break-after: avoid !important;
+  }
+  
+  /* Prevent orphaned content */
+  .grid-container {
+    orphans: 3;
+    widows: 3;
+  }
+}

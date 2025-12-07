@@ -40,3 +40,17 @@
 .read-the-docs {
   color: #888;
 }
+@media print {
+  /* Hide anything you don't want on the printed report */
+  .no-print {
+    display: none !important;
+  }
+
+  /* Make the root container behave like a full-width A4 page */
+  #root {
+    max-width: 210mm;   /* A4 width */
+    margin: 0 auto;
+    padding: 0;         /* remove the 2rem padding for print */
+    text-align: left;   /* optional: avoids centered report */
+  }
+}
