@@ -13,7 +13,7 @@ import {
   Cell,
   Legend
 } from 'recharts';
-import A4PageLayout from '../components/A4PageLayout.jsx';
+import A4PageLayout from '../Components/A4PageLayout';
 import './Level3Page.css';
 
 // Hardcoded test JSON (from n8n) for this phase
