@@ -10,7 +10,7 @@ import {
   ResponsiveContainer,
   LabelList,
 } from 'recharts';
-import A4PageLayout from '../Components/A4PageLayout.jsx';
+import A4PageLayout from '../components/A4PageLayout';
 
 const N8N_ENDPOINT =
   'https://smartorange.app.n8n.cloud/webhook/d6df2854-5663-4dfa-bd76-01c5a75aa40c';
