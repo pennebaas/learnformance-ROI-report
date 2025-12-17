@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import Level1Page from './pages/Level1Page';
 import Level2Page from './pages/Level2Page';
 import Level3Page from './pages/Level3Page';
+import Level4And5Page from './pages/Level4And5Page';
 
 function App() {
   const [activePage, setActivePage] = useState('level1');
@@ -12,14 +13,15 @@ function App() {
   const [level1Data, setLevel1Data] = useState(null);
   const [level2Data, setLevel2Data] = useState(null);
   const [level3Data, setLevel3Data] = useState(null);
+  const [level4And5Data, setLevel4And5Data] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const pageParam = params.get('page');        // e.g. ?page=level1, level2, level3
+    const pageParam = params.get('page');        // e.g. ?page=level1, level2, level3, level4and5
     const trainingId = params.get('trainingId'); // will be used for n8n fetch later
 
-    if (pageParam === 'level1' || pageParam === 'level2' || pageParam === 'level3') {
+    if (pageParam === 'level1' || pageParam === 'level2' || pageParam === 'level3' || pageParam === 'level4and5') {
       setActivePage(pageParam);
       setSinglePageMode(true);  // no menu in PDF mode
     } else {
@@ -56,13 +58,19 @@ function App() {
       title: 'Level 3 - Behaviour & Application',
     };
 
+    const dummyLevel4And5 = {
+      title: 'Level 4 & 5 - Results & ROI',
+      // Add your Level 4&5 specific fields here
+    };
+
     setLevel1Data(dummyLevel1);
     setLevel2Data(dummyLevel2);
     setLevel3Data(dummyLevel3);
+    setLevel4And5Data(dummyLevel4And5);
     setLoading(false);
   }, []);
 
-  if (loading || !level1Data || !level2Data || !level3Data) {
+  if (loading || !level1Data || !level2Data || !level3Data || !level4And5Data) {
     return <div style={{ padding: 24 }}>Loading report…</div>;
   }
 
@@ -75,6 +83,9 @@ function App() {
     }
     if (activePage === 'level3') {
       return <Level3Page data={level3Data} />;
+    }
+    if (activePage === 'level4and5') {
+      return <Level4And5Page data={level4And5Data} />;
     }
     return <div>Unknown page</div>;
   };
@@ -89,17 +100,16 @@ function App() {
     >
       {/* Show menu only in normal mode (no ?page=...) */}
       {!singlePageMode && (
-  <nav
-    className="no-print"
-    style={{
-      display: 'flex',
-      gap: '12px',
-      borderBottom: '1px solid #ddd',
-      padding: '12px 24px',
-      marginBottom: 16,
-    }}
-  >
-
+        <nav
+          className="no-print"
+          style={{
+            display: 'flex',
+            gap: '12px',
+            borderBottom: '1px solid #ddd',
+            padding: '12px 24px',
+            marginBottom: 16,
+          }}
+        >
           <button
             onClick={() => setActivePage('level1')}
             style={{
@@ -147,6 +157,22 @@ function App() {
             }}
           >
             Level 3 – Behaviour
+          </button>
+          <button
+            onClick={() => setActivePage('level4and5')}
+            style={{
+              border: 'none',
+              borderBottom:
+                activePage === 'level4and5'
+                  ? '2px solid #1976d2'
+                  : '2px solid transparent',
+              background: 'none',
+              padding: '8px 4px',
+              cursor: 'pointer',
+              fontWeight: activePage === 'level4and5' ? 600 : 400,
+            }}
+          >
+            Level 4&5 – Results & ROI
           </button>
         </nav>
       )}
