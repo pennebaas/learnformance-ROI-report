@@ -9,7 +9,7 @@ import {
   Tooltip,
   ResponsiveContainer
 } from 'recharts';
-import A4PageLayout from '../Components/A4PageLayout';
+import A4PageLayout from '../components/A4PageLayout.jsx';
 import './Level3Page.css';
 
 // Hardcoded test JSON (from n8n) for this phase
