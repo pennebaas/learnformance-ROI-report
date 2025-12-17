@@ -1,4 +1,3 @@
-cat > src/components/A4PageLayout.jsx << 'EOF'
 // src/components/A4PageLayout.jsx
 import React from 'react';
 
@@ -90,4 +89,3 @@ const A4PageLayout = ({ children, pageNumber, totalPages }) => {
 };
 
 export default A4PageLayout;
-EOF
