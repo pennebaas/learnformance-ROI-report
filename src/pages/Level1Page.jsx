@@ -14,7 +14,7 @@ import {
   LabelList,
   ComposedChart
 } from 'recharts';
-import A4PageLayout from '../Components/A4PageLayout';
+import A4PageLayout from '../components/A4PageLayout';
 
 const N8N_ENDPOINT_LEVEL1 =
   'https://smartorange.app.n8n.cloud/webhook/c051874f-45e0-4299-b865-222431eeada1';
