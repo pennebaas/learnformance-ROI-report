@@ -1,8 +1,8 @@
-// src/Components/A4PageLayout.jsx
+// src/components/A4PageLayout.jsx
 import React from 'react';
 import logo from '../assets/Learnformance-logo.png';
 
-const A4PageLayout = ({ title, subtitle, children }) => {
+const A4PageLayout = ({ title, subtitle, reportMode = false, children }) => {
   return (
     <div
       className="page"
@@ -22,6 +22,7 @@ const A4PageLayout = ({ title, subtitle, children }) => {
           padding: '10mm 8mm 10mm',
           border: '1px solid #E0E0E0',
           backgroundColor: '#FFFFFF',
+          minHeight: '297mm',
         }}
       >
         {/* HEADER */}
@@ -57,7 +58,8 @@ const A4PageLayout = ({ title, subtitle, children }) => {
             >
               {title}
             </h1>
-            {subtitle && (
+
+            {subtitle && !reportMode && (
               <p
                 style={{
                   margin: 0,
@@ -84,39 +86,41 @@ const A4PageLayout = ({ title, subtitle, children }) => {
           {children}
         </div>
 
-        {/* FOOTER (normal in flow on screen, fixed in print via CSS) */}
-        <div
-          className="report-footer"
-          style={{
-            padding: '6px 24px 8px',
-            borderTop: '1px solid #E0E0E0',
-            display: 'flex',
-            alignItems: 'center',
-            backgroundColor: '#FFFFFF',
-          }}
-        >
-          <img
-            src={logo}
-            alt="Learnformance Logo"
+        {/* FOOTER (hidden in report mode) */}
+        {!reportMode && (
+          <div
+            className="report-footer"
             style={{
-              width: '18px',
-              height: 'auto',
-              objectFit: 'contain',
-              marginRight: '6px',
-            }}
-          />
-          <p
-            style={{
-              margin: 0,
-              fontSize: '10px',
-              color: '#2C3E50',
-              fontFamily: 'Inter, sans-serif',
+              padding: '6px 24px 8px',
+              borderTop: '1px solid #E0E0E0',
+              display: 'flex',
+              alignItems: 'center',
+              backgroundColor: '#FFFFFF',
             }}
           >
-            <span style={{ fontWeight: 600 }}>Learnformance</span> – Turning
-            your learning data into measurable impact
-          </p>
-        </div>
+            <img
+              src={logo}
+              alt="Learnformance Logo"
+              style={{
+                width: '18px',
+                height: 'auto',
+                objectFit: 'contain',
+                marginRight: '6px',
+              }}
+            />
+            <p
+              style={{
+                margin: 0,
+                fontSize: '10px',
+                color: '#2C3E50',
+                fontFamily: 'Inter, sans-serif',
+              }}
+            >
+              <span style={{ fontWeight: 600 }}>Learnformance</span> – Turning
+              your learning data into measurable impact
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );
