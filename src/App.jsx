@@ -6,33 +6,32 @@ import Level3Page from './pages/Level3Page';
 import Level4And5Page from './pages/Level4And5Page';
 
 function App() {
-  const [activePage, setActivePage] = useState('level1');
-  const [singlePageMode, setSinglePageMode] = useState(false);
-  const [reportMode, setReportMode] = useState(false); // ✅ NEW
+  // Always read URL live
+  const params = new URLSearchParams(window.location.search);
+  const mode = params.get('mode'); // ?mode=report
+  const pageParam = params.get('page'); // ?page=level1, level2, level3, level4and5
 
-  // Dummy data for now – replace with real fetch from n8n later
+  // Derived flags
+  const reportMode = mode === 'report';
+  const singlePageMode =
+    reportMode ||
+    pageParam === 'level1' ||
+    pageParam === 'level2' ||
+    pageParam === 'level3' ||
+    pageParam === 'level4and5';
+
+  const [activePage, setActivePage] = useState('level1');
+
+  // Dummy data (replace later with n8n fetch)
   const [level1Data, setLevel1Data] = useState(null);
   const [level2Data, setLevel2Data] = useState(null);
   const [level3Data, setLevel3Data] = useState(null);
   const [level4And5Data, setLevel4And5Data] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // Sync active page from URL (only outside report mode)
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-
-    const mode = params.get('mode');              // ✅ NEW: ?mode=report
-    const pageParam = params.get('page');         // ?page=level1, level2, level3, level4and5
-    const trainingId = params.get('trainingId');  // will be used for n8n fetch later
-
-    // ✅ Report mode: render ALL pages, no menu
-    if (mode === 'report') {
-      setReportMode(true);
-      setSinglePageMode(true);
-      setActivePage('level1'); // irrelevant in report mode, but keep safe default
-    } else {
-      setReportMode(false);
-
-      // ✅ Single page mode: render ONE page (no menu)
+    if (!reportMode) {
       if (
         pageParam === 'level1' ||
         pageParam === 'level2' ||
@@ -40,17 +39,25 @@ function App() {
         pageParam === 'level4and5'
       ) {
         setActivePage(pageParam);
-        setSinglePageMode(true);
       } else {
-        // ✅ Normal mode: menu + tabs
         setActivePage('level1');
-        setSinglePageMode(false);
       }
     }
+  }, [reportMode, pageParam]);
 
-    // TODO later: fetch real data from n8n using trainingId.
-    // For now: hard-coded dummy data so you can see the structure.
+  // Toggle report-mode class (for print/PDF CSS if needed)
+  useEffect(() => {
+    document.documentElement.classList.toggle('report-mode', reportMode);
+    document.body.classList.toggle('report-mode', reportMode);
 
+    return () => {
+      document.documentElement.classList.remove('report-mode');
+      document.body.classList.remove('report-mode');
+    };
+  }, [reportMode]);
+
+  // Dummy data init
+  useEffect(() => {
     const dummyLevel1 = {
       page: 2,
       title: 'Level 1 - Reaction (Course Evaluation)',
@@ -87,9 +94,19 @@ function App() {
     if (activePage === 'level1') return <Level1Page data={level1Data} />;
     if (activePage === 'level2') return <Level2Page data={level2Data} />;
     if (activePage === 'level3') return <Level3Page data={level3Data} />;
-    if (activePage === 'level4and5') return <Level4And5Page data={level4And5Data} />;
+    if (activePage === 'level4and5')
+      return <Level4And5Page data={level4And5Data} />;
     return <div>Unknown page</div>;
   };
+
+  const navBtnStyle = (key) => ({
+    border: 'none',
+    borderBottom: activePage === key ? '2px solid #1976d2' : '2px solid transparent',
+    background: 'none',
+    padding: '8px 4px',
+    cursor: 'pointer',
+    fontWeight: activePage === key ? 600 : 400,
+  });
 
   return (
     <div
@@ -99,7 +116,7 @@ function App() {
           'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
       }}
     >
-      {/* ✅ Menu only in normal mode */}
+      {/* Navigation (normal mode only) */}
       {!singlePageMode && (
         <nav
           className="no-print"
@@ -111,18 +128,31 @@ function App() {
             marginBottom: 16,
           }}
         >
-          {/* buttons unchanged */}
-          {/* ... */}
+          <button onClick={() => setActivePage('level1')} style={navBtnStyle('level1')}>
+            Level 1 – Reaction
+          </button>
+          <button onClick={() => setActivePage('level2')} style={navBtnStyle('level2')}>
+            Level 2 – Learning Outcomes
+          </button>
+          <button onClick={() => setActivePage('level3')} style={navBtnStyle('level3')}>
+            Level 3 – Behaviour
+          </button>
+          <button
+            onClick={() => setActivePage('level4and5')}
+            style={navBtnStyle('level4and5')}
+          >
+            Level 4&5 – Results & ROI
+          </button>
         </nav>
       )}
 
-      {/* ✅ Report mode: render ALL pages in order */}
+      {/* Report vs normal rendering */}
       {reportMode ? (
         <div style={{ padding: 0 }}>
-          <Level1Page data={level1Data} />
-          <Level2Page data={level2Data} />
-          <Level3Page data={level3Data} />
-          <Level4And5Page data={level4And5Data} reportMode />
+          <Level1Page data={level1Data} reportMode />
+          <Level2Page data={level2Data} reportMode />
+          <Level3Page data={level3Data} reportMode />
+          <Level4And5Page data={level4And5Data} reportMode isLastPage />
         </div>
       ) : (
         <div style={{ padding: '24px' }}>{renderPage()}</div>

@@ -6,8 +6,8 @@ const A4PageLayout = ({
   title,
   subtitle,
   reportMode = false,
-  multiPage = false,   // ✅ NEW
-  isLastPage = false,  // ✅ NEW: prevents a trailing blank page
+  multiPage = false,   // ✅ allow content to flow across multiple PDF pages (Level 3)
+  isLastPage = false,  // ✅ prevents a trailing blank page at the end of the report
   children,
 }) => {
   const urlReportMode =
@@ -40,6 +40,8 @@ const A4PageLayout = ({
           boxSizing: 'border-box',
           padding: '10mm 8mm 10mm',
           backgroundColor: '#FFFFFF',
+
+          // ✅ Remove the grey frame in report mode / PDFShift mode
           border: isReportMode ? 'none' : '1px solid #E0E0E0',
 
           // ✅ CRITICAL: multiPage must NOT clip content after a page-break
@@ -78,8 +80,16 @@ const A4PageLayout = ({
               {title}
             </h1>
 
-            {subtitle && !isReportMode && (
-              <p style={{ margin: 0, fontSize: '12px', color: '#2C3E50', opacity: 0.8 }}>
+            {/* ✅ Subtitle should ALWAYS show (normal + report mode) */}
+            {subtitle && (
+              <p
+                style={{
+                  margin: 0,
+                  fontSize: '12px',
+                  color: '#2C3E50',
+                  opacity: 0.8,
+                }}
+              >
                 {subtitle}
               </p>
             )}
@@ -108,10 +118,23 @@ const A4PageLayout = ({
             <img
               src={logo}
               alt="Learnformance Logo"
-              style={{ width: '18px', height: 'auto', objectFit: 'contain', marginRight: '6px' }}
+              style={{
+                width: '18px',
+                height: 'auto',
+                objectFit: 'contain',
+                marginRight: '6px',
+              }}
             />
-            <p style={{ margin: 0, fontSize: '10px', color: '#2C3E50', fontFamily: 'Inter, sans-serif' }}>
-              <span style={{ fontWeight: 600 }}>Learnformance</span> – Turning your learning data into measurable impact
+            <p
+              style={{
+                margin: 0,
+                fontSize: '10px',
+                color: '#2C3E50',
+                fontFamily: 'Inter, sans-serif',
+              }}
+            >
+              <span style={{ fontWeight: 600 }}>Learnformance</span> – Turning
+              your learning data into measurable impact
             </p>
           </div>
         )}
