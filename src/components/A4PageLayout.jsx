@@ -3,6 +3,13 @@ import React from 'react';
 import logo from '../assets/Learnformance-logo.png';
 
 const A4PageLayout = ({ title, subtitle, reportMode = false, children }) => {
+  // Auto-detect report mode via URL param: ?mode=report
+  const urlReportMode =
+    typeof window !== 'undefined' &&
+    new URLSearchParams(window.location.search).get('mode') === 'report';
+
+  const isReportMode = reportMode || urlReportMode;
+
   return (
     <div
       className="page"
@@ -59,7 +66,7 @@ const A4PageLayout = ({ title, subtitle, reportMode = false, children }) => {
               {title}
             </h1>
 
-            {subtitle && !reportMode && (
+            {subtitle && !isReportMode && (
               <p
                 style={{
                   margin: 0,
@@ -77,17 +84,10 @@ const A4PageLayout = ({ title, subtitle, reportMode = false, children }) => {
         </div>
 
         {/* BODY */}
-        <div
-          style={{
-            flex: 1,
-            maxWidth: '100%',
-          }}
-        >
-          {children}
-        </div>
+        <div style={{ flex: 1, maxWidth: '100%' }}>{children}</div>
 
         {/* FOOTER (hidden in report mode) */}
-        {!reportMode && (
+        {!isReportMode && (
           <div
             className="report-footer"
             style={{
@@ -117,7 +117,7 @@ const A4PageLayout = ({ title, subtitle, reportMode = false, children }) => {
               }}
             >
               <span style={{ fontWeight: 600 }}>Learnformance</span> – Turning
-              your learning data intooo measurable impact
+              your learning data into measurable impact
             </p>
           </div>
         )}
