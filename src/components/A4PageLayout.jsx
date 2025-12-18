@@ -117,7 +117,7 @@ const A4PageLayout = ({ title, subtitle, reportMode = false, children }) => {
               }}
             >
               <span style={{ fontWeight: 600 }}>Learnformance</span> – Turning
-              your learning data into measurable impact
+              your learning data intooo measurable impact
             </p>
           </div>
         )}
