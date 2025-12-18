@@ -1,25 +1,23 @@
+/* Print setup only — NO pagination here */
+@page {
+  size: A4;
+  margin: 0;
+}
+
 @media print {
-  body {
-    margin: 0;
-    padding: 0;
+  html, body {
+    margin: 0 !important;
+    padding: 0 !important;
   }
 
   #root {
     height: auto;
   }
 
-  .a4-page {
-    page-break-after: always;
-    break-after: page;
-  }
-
+  /* IMPORTANT: pagination is controlled by .page in index.css */
+  .a4-page,
   .a4-page:last-child {
-    page-break-after: auto;
-    break-after: auto;
+    page-break-after: auto !important;
+    break-after: auto !important;
   }
-}
-
-@page {
-  size: A4;
-  margin: 10mm 8mm;
 }
