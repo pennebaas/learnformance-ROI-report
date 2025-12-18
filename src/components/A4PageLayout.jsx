@@ -6,7 +6,7 @@ const A4PageLayout = ({
   title,
   subtitle,
   reportMode = false,
-  multiPage = false,   // ✅ allow content to flow across multiple PDF pages (Level 3)
+  multiPage = false,   // ✅ kept for API compatibility (pagination handled in CSS now)
   isLastPage = false,  // ✅ kept for API compatibility (pagination handled in CSS now)
   children,
 }) => {
@@ -28,8 +28,8 @@ const A4PageLayout = ({
         backgroundColor: '#FFFFFF',
 
         // ✅ IMPORTANT:
-        // Page breaks are handled ONLY via CSS (.page in index.css).
-        // Do NOT add inline breakAfter/pageBreakAfter here (it causes blank pages).
+        // Pagination is controlled ONLY via CSS (.page in index.css).
+        // Do NOT set break/page-break inline.
       }}
     >
       <div
@@ -43,10 +43,13 @@ const A4PageLayout = ({
           // ✅ Remove the grey frame in report mode / PDFShift mode
           border: isReportMode ? 'none' : '1px solid #E0E0E0',
 
-          // ✅ CRITICAL: multiPage must NOT clip content after a page-break
-          ...(multiPage
-            ? { minHeight: '297mm', height: 'auto', overflow: 'visible' }
-            : { height: '297mm', overflow: 'hidden' }),
+          // ✅ KEY FIX:
+          // Never hard-clip one-pagers with height:297mm + overflow:hidden.
+          // That combination can create an extra “blank” physical page in print pipelines.
+          // Let the browser paginate via CSS break-after on the outer .page.
+          minHeight: '297mm',
+          height: 'auto',
+          overflow: 'visible',
         }}
       >
         {/* HEADER */}

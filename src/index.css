@@ -59,14 +59,17 @@ html, body {
 
   .page {
     width: 210mm !important;
-    height: 297mm !important;   /* key: prevents tiny overflow -> blank next page */
-    overflow: hidden;           /* key: prevents “1px spill” */
-    page-break-after: always;
-    break-after: page;
+    height: auto !important;          /* ✅ was 297mm */
+    min-height: 0 !important;         /* ✅ don’t force page-sized box */
+    overflow: visible !important;     /* ✅ was hidden */
+    break-after: page !important;     /* ✅ keep only modern break */
   }
 
   .page:last-child {
-    page-break-after: auto;
-    break-after: auto;
+    break-after: auto !important;
+  }
+
+  .page-break {
+    display: none !important;
   }
 }
