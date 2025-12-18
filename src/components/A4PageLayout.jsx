@@ -1,87 +1,121 @@
-// src/components/A4PageLayout.jsx
+// src/Components/A4PageLayout.jsx
 import React from 'react';
+import logo from '../assets/Learnformance-logo.png';
 
-const A4PageLayout = ({ children, pageNumber, totalPages }) => {
+const A4PageLayout = ({ title, subtitle, children }) => {
   return (
     <div
+      className="page"
       style={{
-        width: '210mm',
-        minHeight: '297mm',
+        fontFamily:
+          'Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+        maxWidth: '210mm',
         margin: '0 auto',
-        padding: '0',
-        background: '#ffffff',
-        boxSizing: 'border-box',
-        position: 'relative',
-        display: 'flex',
-        flexDirection: 'column',
+        backgroundColor: '#FFFFFF',
       }}
     >
-      {/* Header */}
       <div
         style={{
-          borderBottom: '2px solid #1F3A93',
-          padding: '20mm 20mm 10mm 20mm',
-          background: '#ffffff',
+          display: 'flex',
+          flexDirection: 'column',
+          boxSizing: 'border-box',
+          padding: '10mm 8mm 10mm',
+          border: '1px solid #E0E0E0',
+          backgroundColor: '#FFFFFF',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'flex-start', marginBottom: '8px' }}>
-          <div style={{ flex: 1 }}>
+        {/* HEADER */}
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'flex-start',
+            marginBottom: '10px',
+          }}
+        >
+          <div style={{ flexShrink: 0, marginRight: '10px' }}>
+            <img
+              src={logo}
+              alt="Learnformance Logo"
+              style={{
+                width: '26px',
+                height: 'auto',
+                objectFit: 'contain',
+              }}
+            />
+          </div>
+
+          <div style={{ flexGrow: 1, textAlign: 'center' }}>
             <h1
               style={{
                 margin: 0,
-                fontSize: '24px',
-                fontWeight: 'bold',
-                color: '#1F3A93',
-                letterSpacing: '0.5px',
+                marginBottom: '4px',
+                fontSize: '18px',
+                fontWeight: 700,
+                fontFamily: 'Manrope, sans-serif',
+                color: '#2C3E50',
               }}
             >
-              LEARNFORMANCE
+              {title}
             </h1>
-            <p
-              style={{
-                margin: '4px 0 0 0',
-                fontSize: '14px',
-                color: '#7F8C8D',
-              }}
-            >
-              Training Impact Intelligence
-            </p>
-          </div>
-        </div>
-        <div style={{ fontSize: '11px', color: '#7F8C8D', marginTop: '8px' }}>
-          <span>Confidential Report</span>
-          <span style={{ margin: '0 8px' }}>|</span>
-          <span>Generated: {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
-        </div>
-      </div>
-
-      {/* Content */}
-      <div style={{ flex: 1, padding: '10mm 20mm' }}>
-        {children}
-      </div>
-
-      {/* Footer */}
-      <div
-        style={{
-          background: '#F5F7FA',
-          padding: '10mm 20mm',
-          fontSize: '11px',
-          color: '#7F8C8D',
-          borderTop: '1px solid #E0E0E0',
-        }}
-      >
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div>
-            {pageNumber && totalPages && (
-              <span style={{ fontWeight: 'bold' }}>Page {pageNumber} of {totalPages}</span>
+            {subtitle && (
+              <p
+                style={{
+                  margin: 0,
+                  fontSize: '12px',
+                  color: '#2C3E50',
+                  opacity: 0.8,
+                }}
+              >
+                {subtitle}
+              </p>
             )}
           </div>
-          <div style={{ textAlign: 'right' }}>
-            <div>www.learnformance.com</div>
-            <div style={{ marginTop: '4px' }}>
-              © 2025 Learnformance | Turning Training Data into Business Results
-            </div>
-          </div>
+
+          <div style={{ flexShrink: 0, width: '26px' }} />
+        </div>
+
+        {/* BODY */}
+        <div
+          style={{
+            flex: 1,
+            maxWidth: '100%',
+          }}
+        >
+          {children}
+        </div>
+
+        {/* FOOTER (normal in flow on screen, fixed in print via CSS) */}
+        <div
+          className="report-footer"
+          style={{
+            padding: '6px 24px 8px',
+            borderTop: '1px solid #E0E0E0',
+            display: 'flex',
+            alignItems: 'center',
+            backgroundColor: '#FFFFFF',
+          }}
+        >
+          <img
+            src={logo}
+            alt="Learnformance Logo"
+            style={{
+              width: '18px',
+              height: 'auto',
+              objectFit: 'contain',
+              marginRight: '6px',
+            }}
+          />
+          <p
+            style={{
+              margin: 0,
+              fontSize: '10px',
+              color: '#2C3E50',
+              fontFamily: 'Inter, sans-serif',
+            }}
+          >
+            <span style={{ fontWeight: 600 }}>Learnformance</span> – Turning
+            your learning data into measurable impact
+          </p>
         </div>
       </div>
     </div>
