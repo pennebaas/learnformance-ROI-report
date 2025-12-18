@@ -46,3 +46,27 @@ html, body {
   padding: 0 !important;
   background: #fff;
 }
+@media print {
+  @page {
+    size: A4;
+    margin: 0;
+  }
+
+  html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .page {
+    width: 210mm !important;
+    height: 297mm !important;   /* key: prevents tiny overflow -> blank next page */
+    overflow: hidden;           /* key: prevents “1px spill” */
+    page-break-after: always;
+    break-after: page;
+  }
+
+  .page:last-child {
+    page-break-after: auto;
+    break-after: auto;
+  }
+}
