@@ -724,14 +724,15 @@ const Level3Page = () => {
           </div>
         </div>
 
-        {/* Spacer to push 'Key Applied Behaviors' to next printed page */}
-        <div style={{ height: '80px' }} />
+        {/* Force 'Key Applied Behaviors' to start on a new printed page */}
+<div style={{ pageBreakBefore: 'always', breakBefore: 'page' }} />
 
-        {/* KEY APPLIED BEHAVIORS */}
-        <div
-          className="section-break section-header"
-          style={{ marginBottom: '6px' }}
-        >
+{/* KEY APPLIED BEHAVIORS */}
+<div
+  className="section-break section-header"
+  style={{ marginBottom: '6px' }}
+>
+
           <h2
             style={{
               margin: 0,

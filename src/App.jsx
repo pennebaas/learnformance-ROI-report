@@ -118,11 +118,11 @@ function App() {
 
       {/* ✅ Report mode: render ALL pages in order */}
       {reportMode ? (
-        <div style={{ padding: '24px' }}>
+        <div style={{ padding: 0 }}>
           <Level1Page data={level1Data} />
           <Level2Page data={level2Data} />
           <Level3Page data={level3Data} />
-          <Level4And5Page data={level4And5Data} /> {/* ✅ now included */}
+          <Level4And5Page data={level4And5Data} reportMode />
         </div>
       ) : (
         <div style={{ padding: '24px' }}>{renderPage()}</div>
