@@ -1,24 +1,19 @@
+/* src/index.css */
+
 .report {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
-/* The A4 wrapper should control size and breaks, but NOT add extra padding here */
+/* Base (screen): NO pagination rules here */
 .page {
-  page-break-after: always;
-  break-after: page;
-  padding: 0;              /* ✅ important */
-  margin: 0;               /* ✅ important */
+  padding: 0;
+  margin: 0;
   box-sizing: border-box;
 }
 
-.page:last-child {
-  page-break-after: auto;
-  break-after: auto;
-}
-
+/* If any old helper div exists, never let it print */
 .page-break {
-  page-break-after: always;
-  break-after: page;
+  display: none !important;
 }
 
 /* Simple KPI layout */
@@ -41,35 +36,33 @@
 }
 
 /* Critical reset */
-html, body {
+html,
+body {
   margin: 0 !important;
   padding: 0 !important;
   background: #fff;
 }
+
+/* PRINT: single source of truth for pagination */
 @media print {
   @page {
     size: A4;
     margin: 0;
   }
 
-  html, body {
+  html,
+  body {
     margin: 0 !important;
     padding: 0 !important;
   }
 
+  /* ✅ Use ONLY modern pagination */
   .page {
     width: 210mm !important;
-    height: auto !important;          /* ✅ was 297mm */
-    min-height: 0 !important;         /* ✅ don’t force page-sized box */
-    overflow: visible !important;     /* ✅ was hidden */
-    break-after: page !important;     /* ✅ keep only modern break */
+    break-after: page !important;
   }
 
   .page:last-child {
     break-after: auto !important;
-  }
-
-  .page-break {
-    display: none !important;
   }
 }
