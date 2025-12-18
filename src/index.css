@@ -9,9 +9,10 @@
   padding: 0;
   margin: 0;
   box-sizing: border-box;
+  display: block;
 }
 
-/* If any old helper div exists, never let it print */
+/* Never let any page-break helper div print */
 .page-break {
   display: none !important;
 }
@@ -56,13 +57,26 @@ body {
     padding: 0 !important;
   }
 
-  /* ✅ Use ONLY modern pagination */
+  /* ✅ Force exactly one page break AFTER each .page */
   .page {
     width: 210mm !important;
+    display: block !important;
+
+    /* Modern + legacy (compat) — but ONLY inside print */
     break-after: page !important;
+    page-break-after: always !important;
+
+    /* Helps avoid weird splitting behavior */
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
   }
 
   .page:last-child {
     break-after: auto !important;
+    page-break-after: auto !important;
+  }
+
+  .page-break {
+    display: none !important;
   }
 }
