@@ -14,7 +14,7 @@ import {
   LabelList,
   ComposedChart
 } from 'recharts';
-import A4PageLayout from '../components/A4PageLayout';
+import A4PageLayout from '../components/A4PageLayout.jsx';
 
 const N8N_ENDPOINT_LEVEL1 =
   'https://smartorange.app.n8n.cloud/webhook/c051874f-45e0-4299-b865-222431eeada1';
@@ -155,6 +155,18 @@ const Level1Page = () => {
       </text>
     );
   };
+
+  // ✅ Page render guard: prevent empty printed pages
+  const hasMeaningfulContent =
+    (typeof respondents === 'number' && respondents > 0) ||
+    (typeof avgEvaluation === 'number' && avgEvaluation > 0) ||
+    (typeof npsScore === 'number' && (npsScore !== 0 || totalNps > 0)) ||
+    (Array.isArray(kpiData) && kpiData.length > 0) ||
+    (typeof summaryHtml === 'string' && summaryHtml.replace(/<[^>]*>/g, '').trim().length > 0);
+
+  // If nothing meaningful exists, don't render the page at all (fixes blank PDF pages)
+  if (!hasMeaningfulContent) return null;
+
 
   return (
     <A4PageLayout
