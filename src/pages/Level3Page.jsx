@@ -297,13 +297,12 @@ const Level3Page = () => {
   );
 
   return (
-    <A4PageLayout
-      title={
-        data.title ||
-        'Level 3 – Behavior Change & On-the-Job Application'
-      }
-      subtitle="GenAI Training Program | Follow-up 6 weeks after training"
-    >
+  <A4PageLayout
+    title={data.title || 'Level 3 – Behavior Change & On-the-Job Application'}
+    subtitle="GenAI Training Program | Follow-up 6 weeks after training"
+    multiPage
+  >
+
       <div
         style={{
           width: '100%',
