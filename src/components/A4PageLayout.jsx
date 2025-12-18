@@ -7,7 +7,7 @@ const A4PageLayout = ({
   subtitle,
   reportMode = false,
   multiPage = false,   // ✅ allow content to flow across multiple PDF pages (Level 3)
-  isLastPage = false,  // ✅ prevents a trailing blank page at the end of the report
+  isLastPage = false,  // ✅ kept for API compatibility (pagination handled in CSS now)
   children,
 }) => {
   const urlReportMode =
@@ -27,10 +27,9 @@ const A4PageLayout = ({
         margin: '0 auto',
         backgroundColor: '#FFFFFF',
 
-        // ✅ Page separation between Level pages
-        // ✅ But no forced blank page after the final page
-        breakAfter: isLastPage ? 'auto' : 'page',
-        pageBreakAfter: isLastPage ? 'auto' : 'always',
+        // ✅ IMPORTANT:
+        // Page breaks are handled ONLY via CSS (.page in index.css).
+        // Do NOT add inline breakAfter/pageBreakAfter here (it causes blank pages).
       }}
     >
       <div
