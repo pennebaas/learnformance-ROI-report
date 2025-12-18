@@ -16,9 +16,17 @@ const A4PageLayout = ({ title, subtitle, reportMode = false, children }) => {
       style={{
         fontFamily:
           'Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+        width: '210mm',
         maxWidth: '210mm',
-        margin: '0 auto',
+
+        // ✅ Update A: don’t center in report/PDF mode
+        margin: isReportMode ? 0 : '0 auto',
+
         backgroundColor: '#FFFFFF',
+
+        // Print pagination control (safe defaults)
+        pageBreakAfter: 'always',
+        breakAfter: 'page',
       }}
     >
       <div
@@ -26,10 +34,18 @@ const A4PageLayout = ({ title, subtitle, reportMode = false, children }) => {
           display: 'flex',
           flexDirection: 'column',
           boxSizing: 'border-box',
+
+          // Keep all spacing INSIDE the A4 height
           padding: '10mm 8mm 10mm',
-          border: '1px solid #E0E0E0',
+
+          // ✅ Optional: remove visible frame in report mode
+          border: isReportMode ? 'none' : '1px solid #E0E0E0',
+
           backgroundColor: '#FFFFFF',
-          minHeight: '297mm',
+
+          // ✅ Prevent “extra blank page” spill-over
+          height: '297mm',
+          overflow: 'hidden',
         }}
       >
         {/* HEADER */}
@@ -66,6 +82,7 @@ const A4PageLayout = ({ title, subtitle, reportMode = false, children }) => {
               {title}
             </h1>
 
+            {/* Subtitle should NOT show in report mode */}
             {subtitle && !isReportMode && (
               <p
                 style={{
@@ -86,7 +103,7 @@ const A4PageLayout = ({ title, subtitle, reportMode = false, children }) => {
         {/* BODY */}
         <div style={{ flex: 1, maxWidth: '100%' }}>{children}</div>
 
-        {/* FOOTER (hidden in report mode) */}
+        {/* FOOTER (hidden in report mode; PDFShift will inject its own footer) */}
         {!isReportMode && (
           <div
             className="report-footer"
