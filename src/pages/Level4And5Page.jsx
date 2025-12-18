@@ -131,6 +131,7 @@ const Level4And5Page = ({ data, reportMode = false }) => {
       title={safeData.title || 'Level 4 & 5 - Results & ROI'}
       subtitle="GenAI Training Program | Follow-up 6 weeks after training"
       reportMode={isReport}
+      isLastPage
     >
       <div style={{ width: '100%', overflow: 'visible' }}>
         {/* Top spacing (matches your other pages) */}

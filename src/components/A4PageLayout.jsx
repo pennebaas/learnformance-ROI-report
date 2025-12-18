@@ -2,8 +2,14 @@
 import React from 'react';
 import logo from '../assets/Learnformance-logo.png';
 
-const A4PageLayout = ({ title, subtitle, reportMode = false, children }) => {
-  // Auto-detect report mode via URL param: ?mode=report
+const A4PageLayout = ({
+  title,
+  subtitle,
+  reportMode = false,
+  multiPage = false,   // ✅ NEW
+  isLastPage = false,  // ✅ NEW: prevents a trailing blank page
+  children,
+}) => {
   const urlReportMode =
     typeof window !== 'undefined' &&
     new URLSearchParams(window.location.search).get('mode') === 'report';
@@ -18,15 +24,13 @@ const A4PageLayout = ({ title, subtitle, reportMode = false, children }) => {
           'Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
         width: '210mm',
         maxWidth: '210mm',
-
-        // ✅ Update A: don’t center in report/PDF mode
-        margin: isReportMode ? 0 : '0 auto',
-
+        margin: '0 auto',
         backgroundColor: '#FFFFFF',
 
-        // Print pagination control (safe defaults)
-        pageBreakAfter: 'always',
-        breakAfter: 'page',
+        // ✅ Page separation between Level pages
+        // ✅ But no forced blank page after the final page
+        breakAfter: isLastPage ? 'auto' : 'page',
+        pageBreakAfter: isLastPage ? 'auto' : 'always',
       }}
     >
       <div
@@ -34,18 +38,14 @@ const A4PageLayout = ({ title, subtitle, reportMode = false, children }) => {
           display: 'flex',
           flexDirection: 'column',
           boxSizing: 'border-box',
-
-          // Keep all spacing INSIDE the A4 height
           padding: '10mm 8mm 10mm',
-
-          // ✅ Optional: remove visible frame in report mode
+          backgroundColor: '#FFFFFF',
           border: isReportMode ? 'none' : '1px solid #E0E0E0',
 
-          backgroundColor: '#FFFFFF',
-
-          // ✅ Prevent “extra blank page” spill-over
-          height: '297mm',
-          overflow: 'hidden',
+          // ✅ CRITICAL: multiPage must NOT clip content after a page-break
+          ...(multiPage
+            ? { minHeight: '297mm', height: 'auto', overflow: 'visible' }
+            : { height: '297mm', overflow: 'hidden' }),
         }}
       >
         {/* HEADER */}
@@ -60,11 +60,7 @@ const A4PageLayout = ({ title, subtitle, reportMode = false, children }) => {
             <img
               src={logo}
               alt="Learnformance Logo"
-              style={{
-                width: '26px',
-                height: 'auto',
-                objectFit: 'contain',
-              }}
+              style={{ width: '26px', height: 'auto', objectFit: 'contain' }}
             />
           </div>
 
@@ -82,16 +78,8 @@ const A4PageLayout = ({ title, subtitle, reportMode = false, children }) => {
               {title}
             </h1>
 
-            {/* Subtitle should NOT show in report mode */}
             {subtitle && !isReportMode && (
-              <p
-                style={{
-                  margin: 0,
-                  fontSize: '12px',
-                  color: '#2C3E50',
-                  opacity: 0.8,
-                }}
-              >
+              <p style={{ margin: 0, fontSize: '12px', color: '#2C3E50', opacity: 0.8 }}>
                 {subtitle}
               </p>
             )}
@@ -101,9 +89,11 @@ const A4PageLayout = ({ title, subtitle, reportMode = false, children }) => {
         </div>
 
         {/* BODY */}
-        <div style={{ flex: 1, maxWidth: '100%' }}>{children}</div>
+        <div style={{ flex: 1, maxWidth: '100%', overflow: 'visible' }}>
+          {children}
+        </div>
 
-        {/* FOOTER (hidden in report mode; PDFShift will inject its own footer) */}
+        {/* FOOTER (hidden in report mode; PDFShift injects its own footer) */}
         {!isReportMode && (
           <div
             className="report-footer"
@@ -118,23 +108,10 @@ const A4PageLayout = ({ title, subtitle, reportMode = false, children }) => {
             <img
               src={logo}
               alt="Learnformance Logo"
-              style={{
-                width: '18px',
-                height: 'auto',
-                objectFit: 'contain',
-                marginRight: '6px',
-              }}
+              style={{ width: '18px', height: 'auto', objectFit: 'contain', marginRight: '6px' }}
             />
-            <p
-              style={{
-                margin: 0,
-                fontSize: '10px',
-                color: '#2C3E50',
-                fontFamily: 'Inter, sans-serif',
-              }}
-            >
-              <span style={{ fontWeight: 600 }}>Learnformance</span> – Turning
-              your learning data into measurable impact
+            <p style={{ margin: 0, fontSize: '10px', color: '#2C3E50', fontFamily: 'Inter, sans-serif' }}>
+              <span style={{ fontWeight: 600 }}>Learnformance</span> – Turning your learning data into measurable impact
             </p>
           </div>
         )}
